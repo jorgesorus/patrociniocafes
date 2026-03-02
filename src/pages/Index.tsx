@@ -97,6 +97,8 @@ const Index = () => {
           >
             Compre café 100% Arábica com preços exclusivos de fábrica.
             <br className="hidden sm:block" />
+            <strong className="text-secondary">Pedido mínimo a partir de 5kg.</strong>
+            <br />
             <strong className="text-secondary">Promoção por tempo limitado</strong> para empresas.
           </motion.p>
 

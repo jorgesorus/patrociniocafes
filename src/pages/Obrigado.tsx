@@ -1,34 +1,44 @@
 import { useEffect } from "react";
 import { MessageCircle } from "lucide-react";
-import { motion } from "framer-motion";
 
 const WHATSAPP_URL =
   "https://wa.me/5562998707805?text=Oi%2C%20gostaria%20de%20um%20or%C3%A7amento";
 
 const Obrigado = () => {
   useEffect(() => {
+    // Meta Pixel - Lead Event
+    if (typeof (window as any).fbq === 'function') {
+      (window as any).fbq('track', 'Lead', {
+        content_name: 'WhatsApp Desconto',
+        content_category: 'B2B Coffee',
+      });
+    }
+
     const timer = setTimeout(() => {
       window.location.href = WHATSAPP_URL;
-    }, 1000);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-background px-4">
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-      >
-        <MessageCircle className="text-primary w-16 h-16 mx-auto mb-6 animate-pulse" />
-        <p className="font-display text-xl md:text-2xl text-foreground font-semibold mb-2">
-          Redirecionando para o nosso WhatsApp
+    <main className="min-h-screen bg-background flex items-center justify-center">
+      <div className="text-center space-y-6 p-8">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 animate-pulse-soft">
+          <MessageCircle className="h-10 w-10 text-primary" />
+        </div>
+        <p className="text-xl md:text-2xl font-heading font-semibold text-foreground max-w-md">
+          Redirecionando para o nosso WhatsApp para liberar o seu desconto...
         </p>
-        <p className="font-body text-muted-foreground">
-          para iniciarmos o seu orçamento...
-        </p>
-      </motion.div>
+        <div className="flex justify-center gap-1.5 pt-2">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse-soft"
+              style={{ animationDelay: `${i * 300}ms` }}
+            />
+          ))}
+        </div>
+      </div>
     </main>
   );
 };

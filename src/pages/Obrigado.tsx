@@ -2,11 +2,25 @@ import { useEffect } from "react";
 import { MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void;
+  }
+}
+
 const WHATSAPP_URL =
   "https://wa.me/5562998707805?text=Oi%2C%20gostaria%20de%20um%20or%C3%A7amento";
 
 const Obrigado = () => {
   useEffect(() => {
+    // Meta Pixel — Lead event
+    if (window.fbq) {
+      window.fbq("track", "Lead", {
+        content_name: "whatsapp_orcamento",
+        content_category: "cafe_white_label",
+      });
+    }
+
     const timer = setTimeout(() => {
       window.location.href = WHATSAPP_URL;
     }, 1000);

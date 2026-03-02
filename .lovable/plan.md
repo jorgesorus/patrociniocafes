@@ -1,46 +1,46 @@
 
 
-## Plano: Nova Home Promocional + Mover LP Atual para /lp
+## Plano: Melhorar Pagina Promocional com Logo Visivel e Secao de Beneficios
 
-### Resumo
-Mover a landing page institucional atual para a rota `/lp` e criar uma nova pagina principal (`/`) focada exclusivamente na promocao de venda direta da fabrica com ate 40% de desconto para empresas.
+### Problemas Identificados
+1. **Logo invisivel**: A logo esta no codigo mas nao aparece - provavelmente escura demais contra o fundo verde-escuro
+2. **Subtitulo e botao CTA sumiram**: O texto descritivo e o botao "Solicitar Orcamento no WhatsApp" nao estao visiveis na tela
+3. **Faltam os beneficios detalhados**: Os diferenciais que ja existem na `/lp` (Cafe Padrao 14 Acima, 100% Arabica & Bebida Dura, Laudo de Pureza, Graos ou Moido) nao foram incluidos na pagina promocional
+4. **Pagina muito simples**: Precisa de mais corpo e conteudo de conversao
 
-### O que muda
+### O que sera feito
 
-**1. Reorganizar rotas**
-- Renomear `Index.tsx` para `LandingPage.tsx` e mover para rota `/lp`
-- Criar nova `Index.tsx` como pagina promocional na rota `/`
-- Atualizar `App.tsx` com as novas rotas
+**1. Corrigir visibilidade da logo**
+- Adicionar filtro CSS `brightness` ou `invert` para garantir que a logo apareca clara sobre o fundo escuro
+- Alternativa: usar fundo branco arredondado atras da logo
 
-**2. Nova pagina promocional (`/`)**
+**2. Garantir que subtitulo e CTA estejam visiveis**
+- Verificar se os elementos estao renderizando corretamente
+- Ajustar contraste se necessario
 
-Pagina single-screen, impactante, com foco total em conversao. Estrutura:
+**3. Adicionar secao de beneficios/diferenciais**
+- Reutilizar os 4 diferenciais da landing page institucional, adaptados para o contexto promocional:
+  - Cafe Padrao 14 Acima
+  - 100% Arabica & Bebida Dura
+  - Laudo de Pureza Garantido
+  - Em Graos ou Moido
+- Exibir em cards com icones coloridos (ouro/verde), com descricoes curtas
+- Secao com fundo claro (branco ou muted) para contraste com a hero escura
 
-- **Hero promocional fullscreen**: Fundo escuro (verde-escuro da marca) com overlay, simulando o estilo da imagem de referencia
-- **Headline B2B**: Texto grande e direto, ex: "Cafe Premium Direto da Fabrica para Sua Empresa" com destaque em ouro para "Direto da Fabrica"
-- **Badge de desconto**: Circulo verde com "ATE 40% DE DESCONTO" em amarelo/ouro, estilo similar a imagem
-- **Subheadline**: Copy clara como "Compre cafe 100% Arabica com precos exclusivos de fabrica. Promocao por tempo limitado para empresas."
-- **CTA principal**: Botao "Chame no WhatsApp" em verde, redirecionando para `/obrigado`
-- **Diferenciais rapidos**: Linha com icones - "100% Arabica", "Direto da Fabrica", "Entrega para Empresas", "Graos ou Moido"
-- **Footer compacto**: Dados da empresa
-
-**3. Estilo visual**
-- Fundo escuro (verde-escuro) na hero, contrastando com textos brancos e destaques em ouro-alaranjado
-- Tipografia bold e grande para impacto
-- Animacoes com Framer Motion (fade-in, scale)
-- Totalmente responsivo
+**4. Estrutura final da pagina**
+- Hero escura com logo visivel + badge de desconto + headline + subtitulo + CTA
+- Secao de beneficios/diferenciais (cards com icones)
+- Barra de destaques rapidos (100% Arabica, Direto da Fabrica, etc.)
+- Footer compacto
 
 ### Detalhes Tecnicos
 
-**Arquivos modificados:**
-- `src/App.tsx` - Adicionar rota `/lp` e importar novo componente
-- `src/pages/Index.tsx` - Substituir conteudo pela pagina promocional
+**Arquivo modificado:** `src/pages/Index.tsx`
 
-**Arquivos criados:**
-- `src/pages/LandingPage.tsx` - Conteudo atual do Index movido para ca
-
-**Componentes reutilizados:**
-- `Footer.tsx` - Usado em ambas as paginas
-- Logo existente em `src/assets/logo-patrocinio-cafe.png`
-- Imagem promocional `KV_-_01_-_1080x1350.jpg` copiada para `src/assets/` como background
+Alteracoes:
+- Adicionar `className="brightness-0 invert"` na tag `<img>` da logo para torna-la branca
+- Importar icones `Award` e `ShieldCheck` do lucide-react
+- Adicionar array `features` com os 4 diferenciais (titulo, descricao, icone)
+- Criar nova `<section>` entre a hero e a barra de highlights com os cards de beneficios animados com Framer Motion
+- Manter CTA duplicado apos a secao de beneficios para reforcar conversao
 

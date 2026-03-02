@@ -34,7 +34,7 @@ const Obrigado = () => {
             <span
               key={i}
               className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse-soft"
-              style={{ animationDelay: `${i * 300}ms` }}
+              style={{ animationDelay: `${i * 200}ms` }}
             />
           ))}
         </div>

@@ -6,17 +6,33 @@ const WHATSAPP_URL =
 
 const Obrigado = () => {
   useEffect(() => {
-    // Meta Pixel - Lead Event
+    const eventId = crypto.randomUUID();
+
+    // Meta Pixel - Lead Event (client-side)
     if (typeof (window as any).fbq === 'function') {
       (window as any).fbq('track', 'Lead', {
         content_name: 'WhatsApp Desconto',
         content_category: 'B2B Coffee',
-      });
+      }, { eventID: eventId });
     }
+
+    // Meta CAPI - Lead Event (server-side via Vercel)
+    fetch('/api/meta-capi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_name: 'Lead',
+        event_id: eventId,
+        custom_data: {
+          content_name: 'WhatsApp Desconto',
+          content_category: 'B2B Coffee',
+        },
+      }),
+    }).catch(console.error);
 
     const timer = setTimeout(() => {
       window.location.href = WHATSAPP_URL;
-    }, 2000);
+    }, 3000);
     return () => clearTimeout(timer);
   }, []);
 

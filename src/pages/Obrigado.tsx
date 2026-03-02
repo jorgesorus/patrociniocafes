@@ -6,19 +6,12 @@ const WHATSAPP_URL =
   "https://wa.me/5562998707805?text=Oi%2C%20gostaria%20de%20um%20or%C3%A7amento";
 
 const Obrigado = () => {
-// No Obrigado.tsx, dentro do useEffect, ANTES do redirect:
-useEffect(() => {
-  // Dispara evento Lead no Pixel
-  if (typeof window !== 'undefined' && (window as any).fbq) {
-    (window as any).fbq('track', 'Lead');
-  }
-
-  const timer = setTimeout(() => {
-    window.location.href = WHATSAPP_URL;
-  }, 1000);
-  return () => clearTimeout(timer);
-}, []);
-
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.location.href = WHATSAPP_URL;
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-background px-4">

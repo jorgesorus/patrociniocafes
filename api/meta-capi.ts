@@ -13,7 +13,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Missing Meta credentials' });
   }
 
-  const { event_name, event_id, event_time, user_data, custom_data } = req.body;
+  const { event_name, event_id, event_time, event_source_url, user_data, custom_data } = req.body;
 
   const payload = {
     data: [
@@ -21,12 +21,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         event_name,
         event_id,
         event_time: event_time || Math.floor(Date.now() / 1000),
+        event_source_url: event_source_url || 'https://www.patrociniodistribuidora.com/obrigado',
         action_source: 'website',
         user_data: {
           client_ip_address:
             (req.headers['x-forwarded-for'] as string)?.split(',')[0] || '',
           client_user_agent: req.headers['user-agent'] || '',
-          ...user_data,
+          ...(user_data?.fbp ? { fbp: user_data.fbp } : {}),
+          ...(user_data?.fbc ? { fbc: user_data.fbc } : {}),
         },
         custom_data,
       },
@@ -35,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const response = await fetch(
-      `https://graph.facebook.com/v18.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`,
+      `https://graph.facebook.com/v21.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

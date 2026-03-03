@@ -4,6 +4,12 @@ import { MessageCircle } from "lucide-react";
 const WHATSAPP_URL =
   "https://wa.me/5562998707805?text=Oi%2C%20gostaria%20de%20um%20or%C3%A7amento";
 
+/** Lê um cookie pelo nome */
+function getCookie(name: string): string | undefined {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : undefined;
+}
+
 const Obrigado = () => {
   useEffect(() => {
     const eventId = crypto.randomUUID();
@@ -16,6 +22,10 @@ const Obrigado = () => {
       }, { eventID: eventId });
     }
 
+    // Capturar cookies do Meta para deduplicação correta
+    const fbp = getCookie('_fbp');
+    const fbc = getCookie('_fbc');
+
     // Meta CAPI - Contact Event (server-side via Vercel)
     fetch('/api/meta-capi', {
       method: 'POST',
@@ -23,6 +33,11 @@ const Obrigado = () => {
       body: JSON.stringify({
         event_name: 'Contact',
         event_id: eventId,
+        event_source_url: window.location.href,
+        user_data: {
+          fbp: fbp || undefined,
+          fbc: fbc || undefined,
+        },
         custom_data: {
           content_name: 'WhatsApp Desconto',
           content_category: 'B2B Coffee',

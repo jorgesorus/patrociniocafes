@@ -14,37 +14,48 @@ const Obrigado = () => {
   useEffect(() => {
     const eventId = crypto.randomUUID();
 
-    // Meta Pixel - Contact Event (client-side)
+    // Capturar cookies do Meta para deduplicação
+    const fbp = getCookie('_fbp');
+    const fbc = getCookie('_fbc');
+
+    const capiPayload = JSON.stringify({
+      event_name: 'Contact',
+      event_id: eventId,
+      event_source_url: window.location.href,
+      user_agent: navigator.userAgent,
+      fbp: fbp || '',
+      fbc: fbc || '',
+      custom_data: {
+        content_name: 'WhatsApp Desconto',
+        content_category: 'B2B Coffee',
+      },
+    });
+
+    // Estratégia 1: sendBeacon (garante envio mesmo com navegação)
+    const beaconSent = navigator.sendBeacon('/api/meta-capi', new Blob([capiPayload], { type: 'application/json' }));
+
+    // Estratégia 2: fetch como fallback (se sendBeacon falhar)
+    if (!beaconSent) {
+      fetch('/api/meta-capi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: capiPayload,
+        keepalive: true, // garante que o request completa mesmo com navegação
+      }).catch(console.error);
+    }
+
+    // Meta Pixel - Contact Event (client-side) — DESATIVADO PARA TESTE
+    // Descomente a linha abaixo para reativar o pixel após confirmar que o servidor funciona
+    /*
     if (typeof (window as any).fbq === 'function') {
       (window as any).fbq('track', 'Contact', {
         content_name: 'WhatsApp Desconto',
         content_category: 'B2B Coffee',
       }, { eventID: eventId });
     }
+    */
 
-    // Capturar cookies do Meta para deduplicação correta
-    const fbp = getCookie('_fbp');
-    const fbc = getCookie('_fbc');
-
-    // Meta CAPI - Contact Event (server-side via Vercel)
-    fetch('/api/meta-capi', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event_name: 'Contact',
-        event_id: eventId,
-        event_source_url: window.location.href,
-        user_data: {
-          fbp: fbp || undefined,
-          fbc: fbc || undefined,
-        },
-        custom_data: {
-          content_name: 'WhatsApp Desconto',
-          content_category: 'B2B Coffee',
-        },
-      }),
-    }).catch(console.error);
-
+    // Redirecionar para WhatsApp após 3 segundos
     const timer = setTimeout(() => {
       window.location.href = WHATSAPP_URL;
     }, 3000);

@@ -46,7 +46,17 @@ const LeadForm = () => {
     if (!validate()) return;
 
     const formatted = formatWhatsApp(whatsapp);
-    console.log("Lead:", { nome, email, whatsapp: formatted });
+
+    // Salvar dados do lead no sessionStorage para a página /obrigado
+    // Esses dados serão enviados para a CAPI (hasheados no servidor)
+    sessionStorage.setItem(
+      "lead_data",
+      JSON.stringify({
+        nome: nome.trim(),
+        email: email.trim().toLowerCase(),
+        whatsapp: formatted,
+      })
+    );
 
     navigate("/obrigado");
   };

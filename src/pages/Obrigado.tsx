@@ -13,6 +13,25 @@ function getCookie(name: string): string | undefined {
   return match ? decodeURIComponent(match[2]) : undefined;
 }
 
+/** Gera ou recupera um external_id persistente */
+function getExternalId(): string {
+  const key = '_patrocinio_eid';
+  let eid = localStorage.getItem(key);
+  if (!eid) {
+    eid = crypto.randomUUID();
+    localStorage.setItem(key, eid);
+  }
+  return eid;
+}
+
+/** Separa nome completo em primeiro nome e sobrenome */
+function splitName(fullName: string): { fn: string; ln: string } {
+  const parts = fullName.trim().toLowerCase().split(/\s+/);
+  const fn = parts[0] || '';
+  const ln = parts.length > 1 ? parts.slice(1).join(' ') : '';
+  return { fn, ln };
+}
+
 const Obrigado = () => {
   useEffect(() => {
     const eventId = crypto.randomUUID();
@@ -20,6 +39,25 @@ const Obrigado = () => {
     // Capturar cookies do Meta para deduplicação
     const fbp = getCookie('_fbp');
     const fbc = getCookie('_fbc');
+
+    // Recuperar dados do lead do sessionStorage
+    let leadData = { nome: '', email: '', whatsapp: '' };
+    try {
+      const stored = sessionStorage.getItem('lead_data');
+      if (stored) {
+        leadData = JSON.parse(stored);
+        // Limpar para não reenviar em refresh
+        sessionStorage.removeItem('lead_data');
+      }
+    } catch (e) {
+      console.error('Erro ao ler lead_data:', e);
+    }
+
+    // Separar nome em primeiro nome e sobrenome
+    const { fn, ln } = splitName(leadData.nome);
+
+    // External ID persistente para matching
+    const externalId = getExternalId();
 
     const capiPayload = JSON.stringify({
       event_name: 'Contact',
@@ -29,6 +67,17 @@ const Obrigado = () => {
       fbp: fbp || '',
       fbc: fbc || '',
       test_event_code: TEST_EVENT_CODE,
+      // Dados do lead para melhorar qualidade de matching
+      // O hashing SHA256 será feito no SERVIDOR (meta-capi.ts)
+      lead: {
+        em: leadData.email.trim().toLowerCase(),
+        ph: leadData.whatsapp, // já formatado como 5562999999999
+        fn: fn,
+        ln: ln,
+        external_id: externalId,
+        country: 'br',
+        st: 'go', // Goiás — principal mercado
+      },
       custom_data: {
         content_name: 'WhatsApp Desconto',
         content_category: 'B2B Coffee',
@@ -48,15 +97,13 @@ const Obrigado = () => {
       }).catch(console.error);
     }
 
-    // Meta Pixel - Contact Event (client-side) — DESATIVADO PARA TESTE
-    /*
+    // Meta Pixel - Contact Event (client-side) com Advanced Matching
     if (typeof (window as any).fbq === 'function') {
       (window as any).fbq('track', 'Contact', {
         content_name: 'WhatsApp Desconto',
         content_category: 'B2B Coffee',
       }, { eventID: eventId });
     }
-    */
 
     // Redirecionar para WhatsApp após 3 segundos
     const timer = setTimeout(() => {

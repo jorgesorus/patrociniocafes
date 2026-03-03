@@ -8,20 +8,20 @@ const Obrigado = () => {
   useEffect(() => {
     const eventId = crypto.randomUUID();
 
-    // Meta Pixel - Lead Event (client-side)
+    // Meta Pixel - Contact Event (client-side)
     if (typeof (window as any).fbq === 'function') {
-      (window as any).fbq('track', 'Lead', {
+      (window as any).fbq('track', 'Contact', {
         content_name: 'WhatsApp Desconto',
         content_category: 'B2B Coffee',
       }, { eventID: eventId });
     }
 
-    // Meta CAPI - Lead Event (server-side via Vercel)
+    // Meta CAPI - Contact Event (server-side via Vercel)
     fetch('/api/meta-capi', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        event_name: 'Lead',
+        event_name: 'Contact',
         event_id: eventId,
         custom_data: {
           content_name: 'WhatsApp Desconto',

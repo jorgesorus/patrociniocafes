@@ -24,6 +24,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     fbc,
     user_data,
     custom_data,
+    test_event_code,
   } = req.body;
 
   // Montar user_data com IP e User-Agent do request real
@@ -43,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (finalFbp) userData.fbp = finalFbp;
   if (finalFbc) userData.fbc = finalFbc;
 
-  const payload = {
+  const payload: Record<string, any> = {
     data: [
       {
         event_name: event_name || 'Contact',
@@ -57,7 +58,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ],
   };
 
-  console.log('CAPI Payload:', JSON.stringify(payload, null, 2));
+  // Incluir test_event_code se fornecido (para testes no Meta Events Manager)
+  if (test_event_code) {
+    payload.test_event_code = test_event_code;
+  }
+
+  console.log('CAPI Payload enviado ao Meta:', JSON.stringify(payload, null, 2));
 
   try {
     const response = await fetch(

@@ -4,6 +4,9 @@ import { MessageCircle } from "lucide-react";
 const WHATSAPP_URL =
   "https://wa.me/5562998707805?text=Oi%2C%20gostaria%20de%20um%20or%C3%A7amento";
 
+// Código de teste do Meta Events Manager — REMOVER APÓS TESTE
+const TEST_EVENT_CODE = "TEST33458";
+
 /** Lê um cookie pelo nome */
 function getCookie(name: string): string | undefined {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -25,6 +28,7 @@ const Obrigado = () => {
       user_agent: navigator.userAgent,
       fbp: fbp || '',
       fbc: fbc || '',
+      test_event_code: TEST_EVENT_CODE,
       custom_data: {
         content_name: 'WhatsApp Desconto',
         content_category: 'B2B Coffee',
@@ -40,12 +44,11 @@ const Obrigado = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: capiPayload,
-        keepalive: true, // garante que o request completa mesmo com navegação
+        keepalive: true,
       }).catch(console.error);
     }
 
     // Meta Pixel - Contact Event (client-side) — DESATIVADO PARA TESTE
-    // Descomente a linha abaixo para reativar o pixel após confirmar que o servidor funciona
     /*
     if (typeof (window as any).fbq === 'function') {
       (window as any).fbq('track', 'Contact', {

@@ -5,7 +5,7 @@ const WHATSAPP_URL =
   "https://wa.me/5562998707805?text=Oi%2C%20gostaria%20de%20um%20or%C3%A7amento";
 
 // Código de teste do Meta Events Manager — REMOVER APÓS TESTE
-const TEST_EVENT_CODE = "TEST33458";
+const TEST_EVENT_CODE = "TEST86637";
 
 /** Lê um cookie pelo nome */
 function getCookie(name: string): string | undefined {
